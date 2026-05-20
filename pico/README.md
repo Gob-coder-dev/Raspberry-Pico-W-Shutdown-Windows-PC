@@ -1,6 +1,6 @@
 # Pico HID
 
-Cette partie transforme un Raspberry Pi Pico W en clavier USB HID pour lancer automatiquement des actions sur un PC Windows. Le script utilise la boite `Executer` de Windows (`Win + R`) pour taper des commandes, ouvrir un lien web ou telecharger un PDF.
+Cette partie transforme un Raspberry Pi Pico W en clavier USB HID pour lancer automatiquement des actions sur un PC Windows. Le script utilise la boite `Executer` de Windows (`Win + R`) pour taper des commandes, ouvrir un lien web ou telecharger des programmes.
 
 ## Ce que fait le projet
 
@@ -8,7 +8,7 @@ Quand le Pico demarre :
 
 - la LED integree clignote pendant l'initialisation USB ;
 - le Pico attend que Windows detecte correctement le clavier HID ;
-- il lit l'etat des broches `GP0` a `GP4` ;
+- il lit l'etat des broches `GP0` a `GP3` ;
 - il execute l'action associee a chaque broche qui est a l'etat haut.
 
 Les conditions sont independantes : si plusieurs broches sont actives au demarrage, plusieurs actions peuvent s'enchainer.
@@ -33,11 +33,9 @@ Les conditions sont independantes : si plusieurs broches sont actives au demarra
 ## Broches et actions
 
 - `GP0` : arret immediat de Windows avec `shutdown /s /t 0`.
-- `GP1` : ouvre Microsoft Edge avec l'URL definie dans `code.py`.
-- `GP2` : telecharge un PDF dans `%USERPROFILE%\Downloads\p.pdf`.
-- `GP3` : telecharge ce meme PDF puis l'ouvre avec l'application PDF par defaut.
-- `GP4` : cree un rapport texte `rapport_demo.txt` dans `%TEMP%`, ajoute des informations systeme de demonstration, puis l'envoie au serveur web configure dans `code.py`.
-- `GP15` : gere dans `boot.py`. Si `GP15` n'est pas a l'etat haut au boot, le stockage USB `CIRCUITPY` est desactive.
+- `GP1` : ouvre Microsoft Edge avec l'URL definie dans `code.py` (exemple : YouTube).
+- `GP2` : telecharge un programme GitHub et l'execute automatiquement.
+- `GP3` : cree un rapport texte `rapport_demo.txt` dans `%TEMP%`, ajoute des informations systeme de demonstration, puis l'envoie au serveur web configure dans `code.py`.
 
 ## Fonctions de `code.py`
 
@@ -57,17 +55,13 @@ Ouvre la fenetre `Executer`, tape la commande `shutdown /s /t ...`, puis valide.
 
 Ouvre la fenetre `Executer`, tape `msedge <url>`, puis lance Microsoft Edge sur l'adresse passee en parametre.
 
-### `pdf_download(kbd, layout)`
+### `github_download_and_open(kbd, layout)`
 
-Ouvre la fenetre `Executer`, puis lance une commande `cmd` qui :
+Ouvre la fenetre `Executer`, puis lance une commande PowerShell qui :
 
-- se place dans le dossier `Downloads` de l'utilisateur ;
-- telecharge le PDF configure ;
-- l'enregistre sous le nom `p.pdf`.
-
-### `pdf_download_and_open(kbd, layout)`
-
-Fait la meme chose que `pdf_download()`, puis ouvre le fichier telecharge avec l'application par defaut de Windows.
+- telecharge un programme depuis GitHub (URL definie dans la fonction) ;
+- l'enregistre dans le dossier temporaire ;
+- l'execute automatiquement avec `pythonw`.
 
 ### `import_data_on_website(kbd, layout)`
 
@@ -80,7 +74,7 @@ Fonction principale du script :
 - demarre le clignotement de la LED ;
 - attend que l'USB soit pret ;
 - initialise le clavier HID et le layout AZERTY ;
-- verifie les broches `GP0` a `GP4` ;
+- verifie les broches `GP0` a `GP3` ;
 - execute les actions correspondantes ;
 - arrete le clignotement, puis reste en attente.
 

